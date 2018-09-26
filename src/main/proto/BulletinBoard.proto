@@ -3,3 +3,19 @@ package com.bulletinboard;
 option java_multiple_files = true;
 
 // Implement Proto File Here
+
+
+
+/* Stuff TA did in recitation */
+
+message messageRequest{
+	string message = 1;
+}
+
+message messageResponse{
+	repeated string messages = 1;
+}
+
+service BulletinBoard{
+	rpc processMessage(messageRequest) return (messageResponse);
+}
