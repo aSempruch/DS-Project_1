@@ -1,25 +1,62 @@
 package com.bulletinboard;
 
+import java.util.Scanner;
+
 import com.bulletinboard.BulletinBoardGrpc.BulletinBoardBlockingStub;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 public class BulletinBoardClient {
+	
+	static int port = 6050;
+	static BulletinBoardBlockingStub stub;
 
 	public static void main(String[] args) {
+		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", port).usePlaintext().build();
+		stub = BulletinBoardGrpc.newBlockingStub(channel);
 		
-		/* Stuff TA did in recitation */
+		Scanner sc = new Scanner(System.in);
 		
-		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 5000).userPlainText().build();
+		// Accept input loop
+		while(true) {
+			System.out.print("> ");
+			String[] input = sc.nextLine().split(" ", 2);
+					
+			if(input[0].equals("exit"))
+				break;
+			
+			if(input[0].equals("post")) {
+				addPost(input[0], input[1]);
+			}
+			
+			if(input[0].equals("list")) {
+				listPosts();
+			}
+		}
 		
-		BulletinBoardBlockingStub stub = BulletinBoardGrpc.newBlockingStub(channel);
+		sc.close();
+	}
+	
+	public static void addPost(String title, String body) {
+		addPostRequest req = addPostRequest.newBuilder().setTitle(title).setBody(body).build();
 		
-		messageRequest req = messageRequest.newBuilder().setMessage("Hello").build();
+		addPostResponse res = stub.addPost(req);
 		
-		messageResponse res = stub.processMessage(req);
+		System.out.println(res.getResponse());
+	}
+	
+	public static void listPosts() {
+		System.out.println("Posts: ");
+		getPostsRequest req = getPostsRequest.newBuilder().build();
+		getPostsResponse res = stub.getPosts(req);
 		
-		System.out.println(res.getMessagesCount());
+		int length = res.getTitleCount();
+		for(int i = 0; i < length; i++) {
+			String title = res.getTitle(i);
+			String body = res.getBody(i);
+			System.out.println("\t" + i + ". " + title + " : " + body);
+		}
 	}
 
 }

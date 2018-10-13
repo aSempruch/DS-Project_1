@@ -1,20 +1,19 @@
 package com.bulletinboard;
 
+import java.io.IOException;
+
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 public class BulletinBoardServer {
+	
+	static int port = 6050;
 
-	public static void main(String[] args) {
-		
-		/* Stuff TA did in recitation */
-		
-		Server server = ServerBuilder.forPort(5000).addService(new BulletinBoardService()).build();
-		
+	public static void main(String[] args) throws IOException, InterruptedException {
+		Server server = ServerBuilder.forPort(port).addService(new BulletinBoardService()).build();
 		server.start();
-		
-		System.out.println("Server Starting on port 5000");
-		
+		System.out.println("Starting server on port " + port);
 		server.awaitTermination();
 	}
+
 }

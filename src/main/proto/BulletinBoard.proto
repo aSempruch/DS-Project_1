@@ -2,20 +2,25 @@ syntax = "proto3";
 package com.bulletinboard;
 option java_multiple_files = true;
 
-// Implement Proto File Here
+// Implement ProtoFile Here
 
-
-
-/* Stuff TA did in recitation */
-
-message messageRequest{
-	string message = 1;
+message addPostRequest{
+	string title = 1;
+	string body = 2;
 }
 
-message messageResponse{
-	repeated string messages = 1;
+message addPostResponse{
+	string response = 1;
+}
+
+message getPostsRequest {}
+
+message getPostsResponse{
+	repeated string title = 1;
+	repeated string body = 2;
 }
 
 service BulletinBoard{
-	rpc processMessage(messageRequest) return (messageResponse);
+	rpc addPost(addPostRequest) returns (addPostResponse);
+	rpc getPosts(getPostsRequest) returns (getPostsResponse);
 }
