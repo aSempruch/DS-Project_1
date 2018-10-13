@@ -16,8 +16,11 @@ message addPostResponse{
 message getPostsRequest {}
 
 message getPostsResponse{
-	repeated string title = 1;
-	repeated string body = 2;
+	message Post {
+		string title = 1;
+		string body = 2;
+	}
+	repeated Post posts = 1;
 }
 
 service BulletinBoard{

@@ -1,6 +1,7 @@
 package com.bulletinboard;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

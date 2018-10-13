@@ -3,6 +3,7 @@ package com.bulletinboard;
 import java.util.Scanner;
 
 import com.bulletinboard.BulletinBoardGrpc.BulletinBoardBlockingStub;
+import com.bulletinboard.getPostsResponse.Post;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -21,13 +22,13 @@ public class BulletinBoardClient {
 		// Accept input loop
 		while(true) {
 			System.out.print("> ");
-			String[] input = sc.nextLine().split(" ", 2);
+			String[] input = sc.nextLine().split(" ", 3);
 					
 			if(input[0].equals("exit"))
 				break;
 			
 			if(input[0].equals("post")) {
-				addPost(input[0], input[1]);
+				addPost(input[1], input[2]);
 			}
 			
 			if(input[0].equals("list")) {
@@ -51,11 +52,12 @@ public class BulletinBoardClient {
 		getPostsRequest req = getPostsRequest.newBuilder().build();
 		getPostsResponse res = stub.getPosts(req);
 		
-		int length = res.getTitleCount();
+		int length = res.getPostsCount();
 		for(int i = 0; i < length; i++) {
-			String title = res.getTitle(i);
-			String body = res.getBody(i);
-			System.out.println("\t" + i + ". " + title + " : " + body);
+			Post post = res.getPosts(i);
+			String title = post.getTitle();
+			String body = post.getBody();
+			System.out.println("\t" + (i+1) + ". " + title + " : " + body);
 		}
 	}
 
