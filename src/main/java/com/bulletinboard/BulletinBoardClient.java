@@ -22,18 +22,29 @@ public class BulletinBoardClient {
 		// Accept input loop
 		while(true) {
 			System.out.print("> ");
-			String[] input = sc.nextLine().split(" ", 3);
-					
+			String[] input = sc.nextLine().split("\"");
+
+			//split by quotes so there will be an extra space in front if its 1 of these 3
+			//other wise exit and list will be fine
+			if(input[0].equals("post ") ){ input[0] = "post"; }
+			if(input[0].equals("delete ") ){ input[0] = "delete"; }
+			if(input[0].equals("get ") ){ input[0] = "get"; }
+
+
 			if(input[0].equals("exit"))
 				break;
 			
+			//if the input is for a post the parameters will be 1 and 3
+			//otherwise if the command is get or delete it will just be 1 and 2
 			if(input[0].equals("post")) {
-				addPost(input[1], input[2]);
+				addPost(input[1], input[3]);
 			}
 			
 			if(input[0].equals("list")) {
 				listPosts();
 			}
+
+			//delete and get methods
 		}
 		
 		sc.close();
