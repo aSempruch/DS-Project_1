@@ -3,7 +3,7 @@ package com.bulletinboard;
 import java.util.Scanner;
 
 import com.bulletinboard.BulletinBoardGrpc.BulletinBoardBlockingStub;
-import com.bulletinboard.getPostsResponse.Post;
+import com.bulletinboard.Post;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -43,8 +43,14 @@ public class BulletinBoardClient {
 			if(input[0].equals("list")) {
 				listPosts();
 			}
-
-			//delete and get methods
+			
+			if(input[0].equals("get")) {
+				getPost(input[1]);
+			}
+			
+			if(input[0].equals("delete")) {
+				deletePost(input[1]);
+			}
 		}
 		
 		sc.close();
@@ -59,17 +65,43 @@ public class BulletinBoardClient {
 	}
 	
 	public static void listPosts() {
-		System.out.println("Posts: ");
 		getPostsRequest req = getPostsRequest.newBuilder().build();
 		getPostsResponse res = stub.getPosts(req);
 		
 		int length = res.getPostsCount();
-		for(int i = 0; i < length; i++) {
-			Post post = res.getPosts(i);
-			String title = post.getTitle();
-			String body = post.getBody();
-			System.out.println("\t" + (i+1) + ". " + title + " : " + body);
+		
+		if(length == 0)
+			System.out.println("There are no posts available");
+		else {
+			System.out.println("Posts: ");
+			for(int i = 0; i < length; i++) {
+				Post post = res.getPosts(i);
+				String title = post.getTitle();
+				String body = post.getBody();
+				System.out.println("\t" + (i+1) + ". " + title + " : " + body);
+			}
 		}
+	}
+	
+	public static void getPost(String title) {
+		getPostRequest req = getPostRequest.newBuilder().setTitle(title).build();
+		getPostResponse res = stub.getPost(req);
+		
+		boolean exists = res.getExists();
+		if(exists)
+			System.out.println(res.getPost().getBody());
+		else
+			System.out.println("No post with title \"" + title + "\" found");
+	}
+	
+	public static void deletePost(String title) {
+		deletePostRequest req = deletePostRequest.newBuilder().setTitle(title).build();
+		deletePostResponse res = stub.deletePost(req);
+		
+		if(res.getResult())
+			System.out.println("Succesfully deleted post with title \"" + title + "\"");
+		else
+			System.out.println("Unable to find post with title \"" + title + "\"");
 	}
 
 }
